@@ -1,0 +1,16 @@
+ body { padding: 1em; }
+ h1 { margin-bottom: .5em; }
+
+#blanket { display: table; }
+.blanket-row { display: table-row; }
+.blanket-square { display: table-cell; padding: .25em; border: 1px solid rgba(0,0,0,0.125); }
+
+.small-circle,
+.large-circle {
+    border-radius: 100%;
+    display: block;
+    margin: 0 auto;
+}
+.small-circle { width: .5em; height: .5em; line-height: .5em; margin-top: .25em;
+    margin-bottom: .25em; }
+.large-circle { width: 1em; height: 1em; line-height: 1em; }
