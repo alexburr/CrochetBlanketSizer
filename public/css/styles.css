@@ -3,7 +3,7 @@
 
 #blanket { display: table; }
 .blanket-row { display: table-row; }
-.blanket-square { display: table-cell; padding: .25em; border: 1px solid rgba(0,0,0,0.125); }
+.blanket-square { display: table-cell; min-width: 1.25em; padding: .25em; border: 1px solid rgba(0,0,0,0.125); }
 
 .small-circle,
 .large-circle {
@@ -11,6 +11,6 @@
     display: block;
     margin: 0 auto;
 }
-.small-circle { width: .5em; height: .5em; line-height: .5em; margin-top: .25em;
+.small-circle { width: .4em; height: .4em; line-height: .4em; margin-top: .25em;
     margin-bottom: .25em; }
-.large-circle { width: 1em; height: 1em; line-height: 1em; }
+.large-circle { width: .8em; height: .8em; line-height: .8em; }

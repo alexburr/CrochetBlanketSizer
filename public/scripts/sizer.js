@@ -14,6 +14,21 @@ const randomColor = function(colors) {
     return color;
 }
 
+const checkSizesArray = function(sizesArray, size) {
+    if (size == "large-circle" && sizesArray.length > 0) {
+        let index = sizesArray.length;
+        if (sizesArray[index - 1] == "large-circle") { size = "small-circle"; }
+
+        if (sizesArray.length > 12) {
+            if (sizesArray[index - 11] == "large-circle") { size = "small-circle"; }
+            if (sizesArray[index - 12] == "large-circle") { size = "small-circle"; }
+            if (sizesArray[index - 13] == "large-circle") { size = "small-circle"; }            
+        }
+    }
+
+    return size;
+}
+
 class ColorTracker {
     colors = [];
     colorIndex = 0;
@@ -59,7 +74,9 @@ const globals = {
     radiusLarge: 10,
     radiusSmall: 5,
     rowsDefault: 20,
-    smallTotal: 0,    
+    sizesArray: [],
+    smallProbability: 0.4,
+    smallTotal: 0,
     squareColor: { name: "color6", value: "201, 217, 229", displayName: "Color6" }
 };
 
@@ -121,8 +138,10 @@ var ColorList = React.createClass({
 
 var BlanketCircle = React.createClass({
     render: function() {
-        let smallSize = (Math.random() < 0.7); //70% probability of getting true
+        let smallSize = (Math.random() < globals.smallProbability);
         let className = (smallSize) ? "small-circle" : "large-circle";
+        className = checkSizesArray(globals.sizesArray, className);
+        globals.sizesArray.push(className);
         let circleColor = globals.colorTracker.getColor();// randomColor(globals.circleColors);
         let circleColorValue = circleColor.value;
         let circleBackgroundColor = "rgb(" + circleColorValue + ")";
