@@ -17,12 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/alexburr/CrochetBlanketSizer"
   },
   "keywords": [],
-  "author": "alexbur",
+  "author": "alexburr",
   "bugs": {},
-  "homepage": "",
+  "homepage": "https://github.com/alexburr/CrochetBlanketSizer",
   "engines": {
     "node": "0.12.x"
   }
