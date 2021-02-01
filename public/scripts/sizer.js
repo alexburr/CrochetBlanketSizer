@@ -60,11 +60,13 @@ const globals = {
     blanketPreviewContainerDivId: "blanketPreviewContainer",
     cellsTotal: 0,
     circleColors: [
-        { name: "saffron", value: "235, 139, 61", displayName: "Saffron", numberSmall: 0, numberLarge: 0 },
-        { name: "daffodil", value: "240, 235, 93", displayName: "Daffodil", numberSmall: 0, numberLarge: 0 },
-        { name: "stormBlue", value: "15, 126, 128", displayName: "Storm Blue", numberSmall: 0, numberLarge: 0 },
-        { name: "gray", value: "128, 128, 128", displayName: "Gray", numberSmall: 0, numberLarge: 0 },
-        { name: "petrol", value: "8, 70, 92", displayName: "Petrol", numberSmall: 0, numberLarge: 0 }
+        { name: "stormBlue", value: "91, 133, 148", displayName: "Storm Blue", numberSmall: 0, numberLarge: 0 },
+        { name: "petrol", value: "12, 67, 92", displayName: "Petrol", numberSmall: 0, numberLarge: 0 },
+        { name: "tomato", value: "140, 16, 16", displayName: "Tomato", numberSmall: 0, numberLarge: 0 },
+        { name: "graphite", value: "65, 64, 66", displayName: "Graphite", numberSmall: 0, numberLarge: 0 },
+        { name: "cream", value: "244, 228, 217", displayName: "Cream", numberSmall: 0, numberLarge: 0 },
+        { name: "daffodil", value: "251, 220, 150", displayName: "Daffodil", numberSmall: 0, numberLarge: 0 },
+        { name: "teal", value: "15, 101, 121", displayName: "Teal", numberSmall: 0, numberLarge: 0 }
     ],
     colorContainerDivId: "colorContainer",
     colorTracker: new ColorTracker(),
@@ -77,7 +79,7 @@ const globals = {
     sizesArray: [],
     smallProbability: 0.4,
     smallTotal: 0,
-    squareColor: { name: "color6", value: "201, 217, 229", displayName: "Color6" }
+    squareColor: { name: "duckEgg", value: "219, 236, 235", displayName: "Duck Egg" }
 };
 
 // ----------------
