@@ -31,6 +31,57 @@ class ScreenGrabber {
     }
 }
 
+class ClipboardCopier {
+    constructor(sourceId) { 
+        this.source = document.getElementById(sourceId);
+        this.ios = (/iP(hone|od|ad)/.test(navigator.platform));
+
+        this.target = document.createElement("textarea");
+        this.target.innerText = this.source.textContent;
+        document.body.appendChild(this.target);
+    }
+
+    iOSVersion() {
+        if (this.ios) {
+            // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
+            var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+            return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+        }
+    }
+
+    copy = function() {
+        if (this.ios && this.iOSVersion()[0] > 10) {
+            this.iosCopy();
+        } else {
+            this.target.select();
+            document.execCommand("copy");
+            alert("The blanket pattern has been copied to the clipboard.");
+        }
+        this.target.remove();
+    }
+
+    iosCopy = function() {
+        const oldContentEditable = this.target.contentEditable;
+        const oldReadOnly = this.target.readOnly;
+        const range = document.createRange();
+
+        this.target.contentEditable = true;
+        this.target.readOnly = false;
+        range.selectNodeContents(this.target);
+
+        const s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(range);
+
+        this.target.setSelectionRange(0, 999999); // A big number, to cover anything that could be inside the element.
+
+        this.target.contentEditable = oldContentEditable;
+        this.target.readOnly = oldReadOnly;
+
+        document.execCommand('copy');
+    }
+}
+
 class SizeTracker {
     numberOfColumns = 0;
     sizesArray = [];
@@ -116,8 +167,7 @@ const globals = {
     blanketPreviewContainerDivId: "blanketPreviewContainer",
     colorContainerDivId: "colorContainer",
     columnsDefault: 10,
-    downloadButtonDivId: "downloadButtonDiv",
-    formContainerDivId: "formContainer",
+    downloadButtonDivId: "downloadButtonContainer",
     rowsDefault: 12,
     smallProbability: .5,
     squareColor: { name: "duckEgg", value: "219, 236, 235", displayName: "Duck Egg" }
@@ -229,10 +279,11 @@ var DownloadButton = React.createClass({
     handleDownloadClick: function(e) {
         e.preventDefault();
         new ScreenGrabber(globals.blanketPreviewContainerDivId, globals.downloadButtonId).download();
+        new ClipboardCopier(globals.colorContainerDivId).copy();
     },
     render: function() {
         return (            
-            <a className="btn btn-primary btn-sm" id="downloadButton" href="#" role="button" onClick={this.handleDownloadClick}>Download</a>
+            <a className="btn btn-primary btn-sm" id="downloadButton" href="#" role="button" onClick={this.handleDownloadClick}>Download &amp; Copy</a>
         )
     }
 })

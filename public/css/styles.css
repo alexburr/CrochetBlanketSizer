@@ -1,7 +1,7 @@
  body { padding: 1em; }
  h1 { margin-bottom: .5em; }
 
- #downloadButtonDiv {
+ #downloadButtonContainer {
      padding: 1em;
      text-align: center;
  }
@@ -16,7 +16,6 @@
     border: 1px solid rgba(0,0,0,0.125);
     display: table-cell;
     height: 1.5em;
-    /*padding: .25em .25em .25em .3em;  */
     vertical-align: middle;
     width: 1.5em; 
 }
