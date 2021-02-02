@@ -1,19 +1,6 @@
 // -------------
 // SUPPORT CODE
 // -------------
-const randomColor = function(colors) {
-    let min = 0;
-    let max = colors.length - 1;
-
-    min = Math.ceil(min);
-    max = Math.floor(max);
-
-    let randomInt = Math.floor(Math.random() * (max - min + 1)) + min;
-    let color = colors[randomInt];
-    color.number++;
-    return color;
-}
-
 class ScreenGrabber {
     constructor(regionId, downloadButtonId) {
         this.region = document.getElementById(regionId);
@@ -31,54 +18,41 @@ class ScreenGrabber {
     }
 }
 
-class ClipboardCopier {
-    constructor(sourceId) { 
+class TextFiller {
+    constructor(sourceId, targetId) {
         this.source = document.getElementById(sourceId);
-        this.ios = (/iP(hone|od|ad)/.test(navigator.platform));
+        this.target = document.getElementById(targetId);
+    }
 
-        this.target = document.createElement("textarea");
+    fill() {
+        const sourceText = this.source.textContent;
         this.target.innerText = this.source.textContent;
-        document.body.appendChild(this.target);
     }
 
-    iOSVersion() {
-        if (this.ios) {
-            // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
-            var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
-            return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+    empty() {
+        this.target.innerText = "";
+    }
+}
+
+class ClipboardCopier {
+    colors = [];
+    textToCopy = "";
+
+    constructor(colors) {
+        this.colors = colors;
+        let i = 0;
+
+        while (i < colors.length) {
+            const color = colors[i];
+            this.textToCopy += color.displayName + "\n" + color.numberSmall + " small\t" + color.numberLarge + " large\n\n";
+            i++;
         }
     }
 
-    copy = function() {
-        if (this.ios && this.iOSVersion()[0] > 10) {
-            this.iosCopy();
-        } else {
-            this.target.select();
-            document.execCommand("copy");
-            alert("The blanket pattern has been copied to the clipboard.");
-        }
-        this.target.remove();
-    }
-
-    iosCopy = function() {
-        const oldContentEditable = this.target.contentEditable;
-        const oldReadOnly = this.target.readOnly;
-        const range = document.createRange();
-
-        this.target.contentEditable = true;
-        this.target.readOnly = false;
-        range.selectNodeContents(this.target);
-
-        const s = window.getSelection();
-        s.removeAllRanges();
-        s.addRange(range);
-
-        this.target.setSelectionRange(0, 999999); // A big number, to cover anything that could be inside the element.
-
-        this.target.contentEditable = oldContentEditable;
-        this.target.readOnly = oldReadOnly;
-
-        document.execCommand('copy');
+    copy() {
+        navigator.clipboard.writeText(this.textToCopy)
+            .then(() => { alert(`Copied!`); })
+            .catch((error) => { alert(`Copy failed! ${error}`); })
     }
 }
 
@@ -154,8 +128,8 @@ class ColorTracker {
 
     addToTotal(color, className) {
         let colorToModify = this.colors[this.colors.indexOf(color)];
-        if (className == "small-circle") { colorToModify.numberSmall++; console.log(colorToModify.name, "small", colorToModify.numberSmall);}
-        else { colorToModify.numberLarge++; console.log(colorToModify.name, "large", colorToModify.numberLarge); }
+        if (className == "small-circle") { colorToModify.numberSmall++; }
+        else { colorToModify.numberLarge++; }
     }
 }
 
@@ -165,6 +139,7 @@ class ColorTracker {
 const globals = {
     blanketDivId: "blanket",
     blanketPreviewContainerDivId: "blanketPreviewContainer",
+    clipboardId: "clipboard",
     colorContainerDivId: "colorContainer",
     columnsDefault: 10,
     downloadButtonDivId: "downloadButtonContainer",
@@ -278,8 +253,10 @@ var BlanketRow = React.createClass({
 var DownloadButton = React.createClass({
     handleDownloadClick: function(e) {
         e.preventDefault();
-        new ScreenGrabber(globals.blanketPreviewContainerDivId, globals.downloadButtonId).download();
-        new ClipboardCopier(globals.colorContainerDivId).copy();
+        const screenGrabber = new ScreenGrabber(globals.blanketPreviewContainerDivId, globals.downloadButtonId);
+        screenGrabber.download();
+        const clipBoardCopier = new ClipboardCopier(colorTracker.getColors());
+        clipBoardCopier.copy();
     },
     render: function() {
         return (            
