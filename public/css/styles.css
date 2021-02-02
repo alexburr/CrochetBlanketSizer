@@ -1,5 +1,9 @@
  body { padding: 1em; }
- h1 { margin-bottom: .5em; }
+ 
+ h1 { 
+    margin-bottom: .5em;
+    text-align: center;
+ }
 
  #downloadButtonContainer {
      padding: 1em;
@@ -35,3 +39,5 @@
     height: .8em; 
     width: .8em; 
 }
+
+.hidden { display: none; }

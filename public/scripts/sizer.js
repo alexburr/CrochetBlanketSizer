@@ -9,12 +9,14 @@ class ScreenGrabber {
     }
 
     download = function() {
+        this.downloadButton.className = "hidden";
         this.canvas = html2canvas(this.region).then(function(canvas) {
             const a = document.createElement('a');
             a.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
             a.download = 'blanket.png';
             a.click();
         });
+        this.downloadButton.className = "";
     }
 }
 
@@ -99,8 +101,8 @@ class SizeTracker {
 class ColorTracker {
     colors = [
         { name: "stormBlue", value: "91, 133, 148", displayName: "Storm Blue", numberSmall: 0, numberLarge: 0 },
-        { name: "petrol", value: "12, 67, 92", displayName: "Petrol", numberSmall: 0, numberLarge: 0 },
         { name: "cream", value: "244, 228, 217", displayName: "Cream", numberSmall: 0, numberLarge: 0 },
+        { name: "petrol", value: "12, 67, 92", displayName: "Petrol", numberSmall: 0, numberLarge: 0 },
         { name: "tomato", value: "140, 16, 16", displayName: "Tomato", numberSmall: 0, numberLarge: 0 },
         { name: "graphite", value: "65, 64, 66", displayName: "Graphite", numberSmall: 0, numberLarge: 0 },
         { name: "teal", value: "15, 101, 121", displayName: "Teal", numberSmall: 0, numberLarge: 0 },
@@ -141,8 +143,9 @@ const globals = {
     blanketPreviewContainerDivId: "blanketPreviewContainer",
     clipboardId: "clipboard",
     colorContainerDivId: "colorContainer",
-    columnsDefault: 10,
+    columnsDefault: 11,
     downloadButtonDivId: "downloadButtonContainer",
+    exportContainerDivId: "exportContainer",
     rowsDefault: 12,
     smallProbability: .5,
     squareColor: { name: "duckEgg", value: "219, 236, 235", displayName: "Duck Egg" }
@@ -166,10 +169,14 @@ var ColorTotal = React.createClass({
 var ColorEntry = React.createClass({
     render: function() {
         return(
-            <div>
-                <h6>{this.props.displayName}</h6> 
-                <p>Small: {this.props.numberSmall}, Large: {this.props.numberLarge}</p>
-            </div>
+            <ul className="list-unstyled">
+                <li>
+                    <b>{this.props.displayName}</b><br />
+                    Small: {this.props.numberSmall}, Large: {this.props.numberLarge}
+                </li>
+                {/* <h6></h6> 
+                <p></p> */}
+            </ul>
         )
     }
 })
@@ -253,10 +260,8 @@ var BlanketRow = React.createClass({
 var DownloadButton = React.createClass({
     handleDownloadClick: function(e) {
         e.preventDefault();
-        const screenGrabber = new ScreenGrabber(globals.blanketPreviewContainerDivId, globals.downloadButtonId);
+        const screenGrabber = new ScreenGrabber(globals.exportContainerDivId, globals.downloadButtonDivId);
         screenGrabber.download();
-        const clipBoardCopier = new ClipboardCopier(colorTracker.getColors());
-        clipBoardCopier.copy();
     },
     render: function() {
         return (            
