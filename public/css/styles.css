@@ -1,16 +1,38 @@
  body { padding: 1em; }
  h1 { margin-bottom: .5em; }
 
-#blanket { display: table; }
+ #downloadButtonDiv {
+     padding: 1em;
+     text-align: center;
+ }
+
+#blanket { 
+    display: table; 
+    font-size: 1.2rem;
+    margin: auto;
+ }
 .blanket-row { display: table-row; }
-.blanket-square { display: table-cell; min-width: 1.25em; padding: .25em; border: 1px solid rgba(0,0,0,0.125); }
+.blanket-square { 
+    border: 1px solid rgba(0,0,0,0.125);
+    display: table-cell;
+    height: 1.5em;
+    /*padding: .25em .25em .25em .3em;  */
+    vertical-align: middle;
+    width: 1.5em; 
+}
 
 .small-circle,
 .large-circle {
+    border: 1px solid rgba(0,0,0,0.0625);
     border-radius: 100%;
     display: block;
     margin: 0 auto;
 }
-.small-circle { width: .4em; height: .4em; line-height: .4em; margin-top: .25em;
-    margin-bottom: .25em; }
-.large-circle { width: .8em; height: .8em; line-height: .8em; }
+.small-circle { 
+    height: .5em; 
+    width: .5em; 
+}
+.large-circle { 
+    height: .8em; 
+    width: .8em; 
+}
