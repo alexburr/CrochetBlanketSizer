@@ -108,24 +108,80 @@ class ColorTracker {
         { name: "teal", value: "15, 101, 121", displayName: "Teal", numberSmall: 0, numberLarge: 0 },
         { name: "daffodil", value: "251, 220, 150", displayName: "Daffodil", numberSmall: 0, numberLarge: 0 }
     ];
-    colorIndex = 0;
+    //colorIndex = 0;
+    numberOfColumns = 0;
+    colorsArray = [];
 
-    constructor() {
+    constructor(numberOfColumns) {
+        this.numberOfColumns = numberOfColumns;
     }
 
     getColors() {
         return this.colors;
     }
 
-    getNextColor() {
-        let color = this.colors[this.colorIndex];
+    // getNextColor() {
+    //     let color = this.colors[this.colorIndex];
 
-        if (this.colorIndex < this.colors.length - 1) {
-            this.colorIndex++;
-        } else {
-            this.colorIndex = 0;
+    //     if (this.colorIndex < this.colors.length - 1) {
+    //         this.colorIndex++;
+    //     } else {
+    //         this.colorIndex = 0;
+    //     }
+    //     return(color);
+    // }
+
+    addRandomColor() {
+        let isColorSafe = false;
+        let randomColor = null;
+
+        while (!isColorSafe) {
+            randomColor = this.getRandomColor();
+            isColorSafe = this.checkColorsArray(randomColor);
         }
-        return(color);
+
+        this.colorsArray.push(randomColor);
+        return randomColor;
+    }
+
+    checkColorsArray(color) {
+        let result = false;
+        let lastIndex = this.colorsArray.length;
+        let numberOfColumns = this.numberOfColumns;
+
+        if (lastIndex < 1) { 
+            result = true;
+        }
+
+        if (lastIndex == 1) {
+            result = (this.colorsArray[0] !== color);
+        }
+
+        if (lastIndex > 1) {
+            let previousColor = this.colorsArray[lastIndex - 1];
+
+            if (lastIndex > numberOfColumns) {
+
+                result = ((previousColor !== color) &&
+                        (this.colorsArray[lastIndex - (numberOfColumns - 3)] !== color) && 
+                        (this.colorsArray[lastIndex - (numberOfColumns - 2)] !== color) &&
+                        (this.colorsArray[lastIndex - (numberOfColumns - 1)] !== color) &&
+                        (this.colorsArray[lastIndex - (numberOfColumns)] !== color) &&
+                        (this.colorsArray[lastIndex - (numberOfColumns + 1)] !== color));
+                console.log("lastIndex > " + numberOfColumns, "(" + lastIndex + ")", color.name, result);
+            } else {
+                result = (previousColor !== color);
+                //console.log("lastIndex > 1", "(" + lastIndex + ")", color.name, previousColor.name, result);
+            }
+        }
+
+        return result;
+    }
+
+    getRandomColor() {
+        let randomNum = Math.floor(Math.random() * this.colors.length); // + 1
+        let randomColor = this.colors[randomNum];
+        return randomColor;
     }
 
     addToTotal(color, className) {
@@ -217,7 +273,7 @@ var BlanketCircle = React.createClass({
         let smallSize = (Math.random() < globals.smallProbability);
         let className = (smallSize) ? "small-circle" : "large-circle";
         className = sizeTracker.checkSizesArray(className);
-        let circleColor = colorTracker.getNextColor();
+        let circleColor = colorTracker.addRandomColor(); //colorTracker.getNextColor();
         let circleColorValue = circleColor.value;
         let circleBackgroundColor = "rgb(" + circleColorValue + ")";
         sizeTracker.addToTotal(className);
@@ -319,6 +375,6 @@ var Form = React.createClass({
 // ----------------
 // Start the show
 // ----------------
-const colorTracker = new ColorTracker();
+const colorTracker = new ColorTracker(globals.columnsDefault);
 const sizeTracker = new SizeTracker(globals.columnsDefault);
 ReactDOM.render(<Form />, document.getElementById(globals.blanketPreviewContainerDivId));
