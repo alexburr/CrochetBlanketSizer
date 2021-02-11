@@ -100,6 +100,13 @@ class ColorManager {
         this.numberOfColumns = numberOfColumns;
     }
 
+    cycleColor(color) {
+        const index = this.colors.findIndex(colorToFind => colorToFind === color);
+        let newColor = (index == this.colors.length - 1) ? this.colors[0] : this.colors[index + 1];
+
+        return newColor;
+    }
+
     getRandomColor() {
         let randomNum = Math.floor(Math.random() * this.colors.length);
         let randomColor = this.colors[randomNum];
@@ -278,6 +285,7 @@ var BlanketCircle = React.createClass({
         let blanketCircleObject = blanketData.addCircle(color, size);
 
         return {
+            color: color,
             className: "blanket-circle " + size,
             colorName: color.name,
             colorValue: color.value,
@@ -285,23 +293,12 @@ var BlanketCircle = React.createClass({
             id: blanketCircleObject.id
         };
     },
-    getNewColor() {
-        // TODO: Cycle through colors instead of getting a new random color
-        let isColorSafe = false;
-        let color = null;
-
-        while (!isColorSafe) {
-            color = colorManager.getRandomColor();
-            isColorSafe = colorManager.checkRandomColor(blanketData.getCircles(), color);
-        }
-
-        return color;
-    },
     handleClick() {
         //console.log('will change', this.state.colorName);
-        let newColor = this.getNewColor();
+        let newColor = colorManager.cycleColor(this.state.color);
         let blanketCircleObject = blanketData.updateCircle(this.state.id, newColor);
         this.setState({ 
+            color: newColor,
             colorName: newColor.name, 
             colorValue: newColor.value,
             backgroundColor: "rgb(" + newColor.value + ")"
