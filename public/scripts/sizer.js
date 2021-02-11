@@ -157,7 +157,7 @@ class ColorTracker {
                         (this.colorsArray[lastIndex - (numberOfColumns - 1)] !== color) &&
                         (this.colorsArray[lastIndex - (numberOfColumns)] !== color) &&
                         (this.colorsArray[lastIndex - (numberOfColumns + 1)] !== color));
-                console.log("lastIndex > " + numberOfColumns, "(" + lastIndex + ")", color.name, result);
+                // console.log("lastIndex > " + numberOfColumns, "(" + lastIndex + ")", color.name, result);
             } else {
                 result = (previousColor !== color);
                 //console.log("lastIndex > 1", "(" + lastIndex + ")", color.name, previousColor.name, result);
@@ -177,6 +177,37 @@ class ColorTracker {
         let colorToModify = this.colors[this.colors.indexOf(color)];
         if (className == "small-circle") { colorToModify.numberSmall++; }
         else { colorToModify.numberLarge++; }
+    }
+}
+
+class BlanketData {
+    blanketCircles = [];
+
+    addCircle(color, size) {
+        var blanketCircleObject = {
+            id: this.blanketCircles.length,
+            color: color,
+            size: size
+        }
+
+        this.blanketCircles.push(blanketCircleObject);
+        return blanketCircleObject;
+    }
+
+    getCircles() {
+        return this.blanketCircles;
+    }
+
+    updateCircle(id, color) {
+        let blanketCircleObject = this.getCircleById(id);
+        console.log('blanketCircleObject found', blanketCircleObject.id, blanketCircleObject.color.name);
+        blanketCircleObject.color = color;
+        console.log('blanketCircleObject change', blanketCircleObject.id, blanketCircleObject.color.name);
+        return blanketCircleObject;
+    }
+
+    getCircleById(idToFind) {
+        return this.blanketCircles.find( ({ id }) => id === idToFind );
     }
 }
 
@@ -258,17 +289,40 @@ var ColorList = React.createClass({
 })
 
 var BlanketCircle = React.createClass({
-    render: function() {
+    getInitialState() {        
+        return this.generateState();
+    },
+    generateState() {
         let smallSize = (Math.random() < globals.smallProbability);
         let className = (smallSize) ? "small-circle" : "large-circle";
         className = sizeTracker.checkSizesArray(className);
-        let circleColor = colorTracker.addRandomColor();
-        let circleColorValue = circleColor.value;
-        let circleBackgroundColor = "rgb(" + circleColorValue + ")";
-        sizeTracker.addToTotal(className);
-        colorTracker.addToTotal(circleColor, className);
+        let color = colorTracker.getRandomColor();
+        let blanketCircleObject = blanketData.addCircle(color, className);
+
+        return {
+            className: className,
+            colorName: color.name,
+            colorValue: color.value,
+            backgroundColor: "rgb(" + color.value + ")",
+            id: blanketCircleObject.id
+        };
+    },
+    handleClick() {
+        //console.log('will change', this.state.colorName);
+        let newColor = colorTracker.getRandomColor();
+        let blanketCircleObject = blanketData.updateCircle(this.state.id, newColor);
+        this.setState({ 
+            colorName: newColor.name, 
+            colorValue: newColor.value,
+            backgroundColor: "rgb(" + newColor.value + ")"
+        });
+        //console.log('changed', this.state.colorName);
+    },
+    render: function() {
+        //sizeTracker.addToTotal(this.state.className);
+        //colorTracker.addToTotal(this.state.color, this.state.className);
         return (
-            <span className={className} style={{ backgroundColor: circleBackgroundColor }} ></span>
+            <span className={this.state.className} style={{ backgroundColor: this.state.backgroundColor }} onClick={this.handleClick} ></span>
         )
     }
 })
@@ -278,7 +332,7 @@ var BlanketSquare = React.createClass({
         let squareBackgroundColor = "rgb(" + globals.squareColor.value + ")";
         return (
             <div className="blanket-square" style={{ backgroundColor: squareBackgroundColor }}>
-                <BlanketCircle />
+                <BlanketCircle prop1="OK" />
             </div>
         )
     }
@@ -366,4 +420,5 @@ var Form = React.createClass({
 // ----------------
 const colorTracker = new ColorTracker(globals.columnsDefault);
 const sizeTracker = new SizeTracker(globals.columnsDefault);
+const blanketData = new BlanketData();
 ReactDOM.render(<Form />, document.getElementById(globals.blanketPreviewContainerDivId));
