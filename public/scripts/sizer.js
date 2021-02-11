@@ -200,18 +200,6 @@ const globals = {
 // ----------------
 // REACT COMPONENTS
 // ----------------
-var ColorTotal = React.createClass({
-    render: function() {
-        return(
-            <div>
-            <hr />
-            <h4>{this.props.displayName}: {this.props.number}</h4>
-            <p>Small: {this.props.numberSmall}, Large: {this.props.numberLarge}</p>
-            </div>
-        )
-    }
-})
-
 var ColorEntry = React.createClass({
     render: function() {
         return(
@@ -220,56 +208,77 @@ var ColorEntry = React.createClass({
                     <b>{this.props.displayName}</b><br />
                     Small: {this.props.numberSmall}, Large: {this.props.numberLarge}
                 </li>
-                {/* <h6></h6> 
-                <p></p> */}
             </ul>
         )
     }
 })
 
-// var ColorList = React.createClass({
-//     render: function() {
-//         let colors = this.props.colors;
-//         let colorEntries = [];
-//         let i = 0;
+var ColorList = React.createClass({
+    getColorCounts(colors, circles) {
+        let colorCounts = [];
+        let i = 0;
 
-//         while (i < colors.length) {
-//             colorEntries.push(
-//                 <ColorEntry 
-//                     key={i} 
-//                     displayName={colors[i].displayName} 
-//                     numberSmall={colors[i].numberSmall} 
-//                     numberLarge={colors[i].numberLarge} />
-//             );
-//             i++;
-//         }
-//         colorEntries.push(
-//             <ColorTotal 
-//             key={99} 
-//             displayName="Total" 
-//             number={sizeTracker.getTotals().total}
-//             numberSmall={sizeTracker.getTotals().small} 
-//             numberLarge={sizeTracker.getTotals().large} />
-//         );
+        while (i < colors.length) {
+            let color = colors[i];
+            let j = 0;
+            let colorCount = { name: color.name, displayName: color.displayName, smallSize: 0, largeSize: 0 };
 
-//         return (
-//             <div>{colorEntries}</div>
-//         )
-//     }
-// })
+            while (j < circles.length) {
+                let circle = circles[j];
+                if (circle.color.name == colorCount.name) {
+                    if (circle.size === "small") {
+                        colorCount.smallSize++;
+                    } else {
+                        colorCount.largeSize++;
+                    }
+                }
+
+                j++;
+            }
+
+            colorCounts.push(colorCount);
+            i++;
+        }
+
+        return colorCounts;
+    },
+    getColorEntries(colorCounts) {
+        let i = 0;
+        let colorEntries = [];
+        while (i < colorCounts.length) {
+            colorEntries.push(
+                <ColorEntry 
+                key={i} 
+                displayName={colorCounts[i].displayName} 
+                numberSmall={colorCounts[i].smallSize} 
+                numberLarge={colorCounts[i].largeSize} />
+            );
+            i++;
+        }
+        return colorEntries;
+    },
+    render: function() {
+        let colors = this.props.colors;
+        let circles = this.props.circles;
+
+        let colorCounts = this.getColorCounts(colors, circles);
+        let colorEntries = this.getColorEntries(colorCounts);
+
+        return (
+            <div>{colorEntries}</div>
+        )
+    }
+})
 
 var BlanketCircle = React.createClass({
     getInitialState() {        
-        return this.generateState();
-    },
-    generateState() {
         let size = sizeManager.getRandomSize();
         size = sizeManager.checkRandomSize(blanketData.getCircles(), size);
         let color = this.getNewColor();
         let blanketCircleObject = blanketData.addCircle(color, size);
 
         return {
-            className: (size === "small") ? "small-circle" : "large-circle",
+            className: "blanket-circle " + size,
             colorName: color.name,
             colorValue: color.value,
             backgroundColor: "rgb(" + color.value + ")",
@@ -299,9 +308,12 @@ var BlanketCircle = React.createClass({
         });
         //console.log('changed', this.state.colorName);
     },
+    componentDidUpdate() {
+        ReactDOM.render(
+            <ColorList colors={globals.colors} circles={blanketData.getCircles()} />, document.getElementById(globals.colorContainerDivId)
+        );
+    },
     render: function() {
-        //sizeTracker.addToTotal(this.state.className);
-        //colorTracker.addToTotal(this.state.color, this.state.className);
         return (
             <span className={this.state.className} style={{ backgroundColor: this.state.backgroundColor }} onClick={this.handleClick} ></span>
         )
@@ -380,9 +392,9 @@ var Form = React.createClass({
         this.displayResults();
     },
     displayResults: function() {
-        // ReactDOM.render(
-        //     <ColorList colors={this.state.colors} />, document.getElementById(globals.colorContainerDivId)
-        // );
+        ReactDOM.render(
+            <ColorList colors={this.state.colors} circles={blanketData.getCircles()} />, document.getElementById(globals.colorContainerDivId)
+        );
         ReactDOM.render(
             <DownloadButton />, document.getElementById(globals.downloadButtonDivId)
         );
@@ -401,6 +413,5 @@ var Form = React.createClass({
 // ----------------
 const colorManager = new ColorManager(globals.colors, globals.columnsDefault); 
 const sizeManager = new SizeManager(globals.columnsDefault);
-// const sizeTracker = new SizeTracker(globals.columnsDefault);
 const blanketData = new BlanketData();
 ReactDOM.render(<Form />, document.getElementById(globals.blanketPreviewContainerDivId));
