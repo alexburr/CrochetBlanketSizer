@@ -137,10 +137,10 @@ class ColorManager {
                         (blanketCircles[lastIndex - (numberOfColumns - 1)].color.name !== color.name) &&
                         (blanketCircles[lastIndex - (numberOfColumns)].color.name !== color.name) &&
                         (blanketCircles[lastIndex - (numberOfColumns + 1)].color !== color.name));
-                debugLogger.log("lastIndex > " + numberOfColumns, "(" + lastIndex + ")", color.name, result);
+                debugLogger.log("lastIndex > " + numberOfColumns + " (" + lastIndex + ") " + color.name + " " + result);
             } else {
                 result = (previousColor.name !== color.name);
-                debugLogger.log("lastIndex > 1", "(" + lastIndex + ")", color.name, previousColor.name, result);
+                debugLogger.log("lastIndex > 1" + " (" + lastIndex + ") " + color.name + " " + previousColor.name + " " + result);
             }
         }
 
@@ -168,17 +168,17 @@ class BlanketData {
 
     updateCircleColor(id, color) {
         let blanketCircleObject = this.getCircleById(id);
-        debugLogger.log('blanketCircleObject found', blanketCircleObject.id, blanketCircleObject.color.name);
+        debugLogger.log('blanketCircleObject found ' + blanketCircleObject.id + " " + blanketCircleObject.color.name);
         blanketCircleObject.color = color;
-        debugLogger.log('blanketCircleObject change', blanketCircleObject.id, blanketCircleObject.color.name);
+        debugLogger.log('blanketCircleObject change ' + blanketCircleObject.id + " " + blanketCircleObject.color.name);
         return blanketCircleObject;
     }
 
     updateCircleSize(id, size) {
         let blanketCircleObject = this.getCircleById(id);
-        debugLogger.log('blanketCircleObject found', blanketCircleObject.id, blanketCircleObject.size);
+        debugLogger.log('blanketCircleObject found ' + blanketCircleObject.id + " " + blanketCircleObject.size);
         blanketCircleObject.size = size;
-        debugLogger.log('blanketCircleObject change', blanketCircleObject.id, blanketCircleObject.size);
+        debugLogger.log('blanketCircleObject change ' + blanketCircleObject.id + " " + blanketCircleObject.size);
         return blanketCircleObject;
     }
 
@@ -330,16 +330,16 @@ var BlanketCircle = React.createClass({
     },
     handleClick(e) {
         if (e.shiftKey || e.ctrlKey) {
-            debugLogger.log('will change', this.state.size);
+            debugLogger.log('will change ' + this.state.size);
             let newSize = (this.state.size == "small") ? "large" : "small";
             let blanketCircleObject = blanketData.updateCircleSize(this.state.id, newSize);
             this.setState({
                 size: newSize,
                 className: "blanket-circle " + newSize
             });
-            debugLogger.log('changed', this.state.size);
+            debugLogger.log('changed ' + this.state.size);
         } else {
-            debugLogger.log('will change', this.state.colorName);
+            debugLogger.log('will change ' + this.state.colorName);
             let newColor = colorManager.cycleColor(this.state.color);
             let blanketCircleObject = blanketData.updateCircleColor(this.state.id, newColor);
             this.setState({ 
@@ -348,7 +348,7 @@ var BlanketCircle = React.createClass({
                 colorValue: newColor.value,
                 backgroundColor: "rgb(" + newColor.value + ")"
             });
-            debugLogger.log('changed', this.state.colorName);
+            debugLogger.log('changed ' + this.state.colorName);
         }
     },
     componentDidUpdate() {
@@ -400,7 +400,7 @@ var DownloadButton = React.createClass({
     },
     render: function() {
         return (            
-            <a className="btn btn-primary btn-sm" id="downloadButton" href="#" role="button" onClick={this.handleDownloadClick}>Download &amp; Copy</a>
+            <a className="btn btn-primary btn-sm" id="downloadButton" href="#" role="button" onClick={this.handleDownloadClick}>Download Blanket</a>
         )
     }
 })
