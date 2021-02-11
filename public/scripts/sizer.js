@@ -166,11 +166,19 @@ class BlanketData {
         return this.blanketCircles;
     }
 
-    updateCircle(id, color) {
+    updateCircleColor(id, color) {
         let blanketCircleObject = this.getCircleById(id);
         //console.log('blanketCircleObject found', blanketCircleObject.id, blanketCircleObject.color.name);
         blanketCircleObject.color = color;
         //console.log('blanketCircleObject change', blanketCircleObject.id, blanketCircleObject.color.name);
+        return blanketCircleObject;
+    }
+
+    updateCircleSize(id, size) {
+        let blanketCircleObject = this.getCircleById(id);
+        //console.log('blanketCircleObject found', blanketCircleObject.id, blanketCircleObject.size);
+        blanketCircleObject.size = size;
+        //console.log('blanketCircleObject change', blanketCircleObject.id, blanketCircleObject.size);
         return blanketCircleObject;
     }
 
@@ -287,23 +295,46 @@ var BlanketCircle = React.createClass({
         return {
             color: color,
             className: "blanket-circle " + size,
+            size: size,
             colorName: color.name,
             colorValue: color.value,
             backgroundColor: "rgb(" + color.value + ")",
             id: blanketCircleObject.id
         };
+    },    
+    getNewColor() {
+        let isColorSafe = false;
+        let color = null;
+
+        while (!isColorSafe) {
+            color = colorManager.getRandomColor();
+            isColorSafe = colorManager.checkRandomColor(blanketData.getCircles(), color);
+        }
+
+        return color;
     },
-    handleClick() {
-        //console.log('will change', this.state.colorName);
-        let newColor = colorManager.cycleColor(this.state.color);
-        let blanketCircleObject = blanketData.updateCircle(this.state.id, newColor);
-        this.setState({ 
-            color: newColor,
-            colorName: newColor.name, 
-            colorValue: newColor.value,
-            backgroundColor: "rgb(" + newColor.value + ")"
-        });
-        //console.log('changed', this.state.colorName);
+    handleClick(e) {
+        if (e.shiftKey || e.ctrlKey) {
+            //console.log('will change', this.state.size);
+            let newSize = (this.state.size == "small") ? "large" : "small";
+            let blanketCircleObject = blanketData.updateCircleSize(this.state.id, newSize);
+            this.setState({
+                size: newSize,
+                className: "blanket-circle " + newSize
+            });
+            //console.log('changed', this.state.size);
+        } else {
+            //console.log('will change', this.state.colorName);
+            let newColor = colorManager.cycleColor(this.state.color);
+            let blanketCircleObject = blanketData.updateCircleColor(this.state.id, newColor);
+            this.setState({ 
+                color: newColor,
+                colorName: newColor.name, 
+                colorValue: newColor.value,
+                backgroundColor: "rgb(" + newColor.value + ")"
+            });
+            //console.log('changed', this.state.colorName);
+        }
     },
     componentDidUpdate() {
         ReactDOM.render(
