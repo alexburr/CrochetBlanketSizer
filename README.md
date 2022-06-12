@@ -4,7 +4,7 @@ For Sarah.
 
 ### Demo
 
-*(TBD)*
+https://alexburr.github.io/apps/CrochetBlanketSizer/index.html
 
 ### Installation
 
